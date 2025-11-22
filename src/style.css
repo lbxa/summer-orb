@@ -19,13 +19,12 @@ body {
 
 #app {
   position: relative;
-  width: min(960px, 90vw);
-  height: min(640px, 70vh);
-  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 40px 160px rgba(11, 58, 103, 0.18);
-  background: #ffffff;
+  /* background: #ffffff; */
   border: 1px solid rgba(11, 90, 196, 0.08);
 }
 
@@ -45,10 +44,9 @@ canvas {
   justify-content: center;
   flex-direction: column;
   gap: 12px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.2));
   z-index: 2;
   transition: opacity 0.35s ease, background 0.35s ease;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
 }
 
 #ui-overlay.passive {
