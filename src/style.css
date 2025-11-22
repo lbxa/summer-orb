@@ -1,0 +1,92 @@
+:root {
+  color: #0b3a67;
+  background: #ffffff;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+#app {
+  position: relative;
+  width: min(960px, 90vw);
+  height: min(640px, 70vh);
+  margin: 0 auto;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 40px 160px rgba(11, 58, 103, 0.18);
+  background: radial-gradient(circle at 50% 40%, rgba(134, 187, 255, 0.18), rgba(255, 255, 255, 0.95));
+  border: 1px solid rgba(11, 90, 196, 0.08);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#ui-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.35));
+  z-index: 2;
+  transition: opacity 0.3s ease, background 0.3s ease;
+  backdrop-filter: blur(12px);
+}
+
+#ui-overlay.passive {
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.12));
+}
+
+#ui-overlay.passive button#enable-mic {
+  display: none;
+}
+
+button#enable-mic {
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid #0b6eea;
+  background: linear-gradient(135deg, #0b6eea, #5ab3ff);
+  color: #f8fbff;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  box-shadow: 0 16px 48px rgba(11, 110, 234, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+button#enable-mic:hover:not([disabled]) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 20px 64px rgba(11, 110, 234, 0.32);
+}
+
+button#enable-mic:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+#error-message {
+  color: #0b3a67;
+  font-size: 0.95rem;
+  text-align: center;
+}
