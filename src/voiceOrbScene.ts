@@ -231,8 +231,8 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
 
   constructor(options: VoiceOrbSceneOptions) {
     this.container = options.container;
-    const width = options.width ?? this.container.clientWidth || 800;
-    const height = options.height ?? this.container.clientHeight || 600;
+    const width = options.width ?? (this.container.clientWidth || 800);
+    const height = options.height ?? (this.container.clientHeight || 600);
 
     this.scene = new Scene();
     this.scene.background = BACKGROUND_COLOR.clone();
