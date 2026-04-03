@@ -7,6 +7,10 @@
   </head>
   <body>
     <div id="app">
+      <div id="context-row" class="context-row hidden" aria-live="polite">
+        <span id="context-orb-slot" class="context-row__orb" aria-hidden="true"></span>
+        <span id="context-text" class="context-row__text">Loading context...</span>
+      </div>
       <div id="ui-overlay">
         <button id="enable-mic" type="button">Enable microphone</button>
         <div id="error-message" class="hidden"></div>

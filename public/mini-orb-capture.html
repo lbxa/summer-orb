@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Orb Capture</title>
+    <link rel="stylesheet" href="/src/contextMiniOrb.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 96px;
+        height: 96px;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ctx-orb-root" style="--ctx-orb-size: 72px">
+      <div class="ctx-orb-atmo"></div>
+      <div class="ctx-orb-spin ctx-orb-spin1"><div class="ctx-orb-ring"></div></div>
+      <div class="ctx-orb-spin ctx-orb-spin2"><div class="ctx-orb-ring2"></div></div>
+      <div class="ctx-orb-spin ctx-orb-spin3"><div class="ctx-orb-ring3"></div></div>
+      <div class="ctx-orb-center"></div>
+      <div class="ctx-orb-warm"></div>
+      <div class="ctx-orb-cool"></div>
+    </div>
+  </body>
+</html>

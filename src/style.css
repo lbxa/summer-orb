@@ -49,6 +49,38 @@ canvas {
   backdrop-filter: blur(4px);
 }
 
+.context-row {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(11, 90, 196, 0.14);
+  box-shadow: 0 8px 28px rgba(11, 58, 103, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.context-row__orb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+}
+
+.context-row__text {
+  color: #0b3a67;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
 #ui-overlay.passive {
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
@@ -89,5 +121,71 @@ button#enable-mic:disabled {
 #error-message {
   color: #0b3a67;
   font-size: 0.95rem;
+  text-align: center;
+}
+
+.export-bar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(11, 90, 196, 0.12);
+  box-shadow: 0 8px 32px rgba(11, 58, 103, 0.12);
+}
+
+.export-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #0b6eea;
+  background: linear-gradient(135deg, #0b6eea, #5ab3ff);
+  color: #f8fbff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(11, 110, 234, 0.25);
+}
+
+.export-btn--stop {
+  background: linear-gradient(135deg, #e03e3e, #ff6b6b);
+  border-color: #c53030;
+}
+
+.export-btn--download {
+  display: inline-block;
+}
+
+.export-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(11, 90, 196, 0.2);
+  background: #fff;
+  color: #0b3a67;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.export-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.export-status {
+  font-size: 0.82rem;
+  color: #0b3a67;
+  min-width: 70px;
   text-align: center;
 }

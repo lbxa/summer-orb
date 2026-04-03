@@ -6,6 +6,7 @@ import {
   Clock,
   Color,
   HemisphereLight,
+  IUniform,
   MathUtils,
   PerspectiveCamera,
   Mesh,
@@ -28,6 +29,7 @@ export interface VoiceOrbSceneOptions {
   container: HTMLElement;
   width?: number;
   height?: number;
+  enableExport?: boolean;
 }
 
 export type OrbState = 'idle' | 'listening' | 'speaking';
@@ -39,6 +41,14 @@ export interface VoiceOrbSceneHandle {
   dispose(): void;
 }
 
+export interface ExportableVoiceOrbHandle extends VoiceOrbSceneHandle {
+  getCanvas(): HTMLCanvasElement;
+  setTransparentBackground(on: boolean): void;
+  renderAtTime(elapsed: number, delta: number): void;
+  pauseAnimation(): void;
+  resumeAnimation(): void;
+}
+
 const BASE_BLUE = new Color('#0b6eea');
 const HIGHLIGHT_BLUE = new Color('#7acbff');
 const CORE_GLOW_BLUE = new Color('#1a8cff');
@@ -46,6 +56,7 @@ const PARTICLE_BLUE = new Color('#8fd7ff');
 const BACKGROUND_COLOR = new Color('#ffffff');
 
 interface OrbUniforms {
+  [uniform: string]: IUniform<unknown>;
   uTime: Uniform<number>;
   uAmplitude: Uniform<number>;
   uBassAmplitude: Uniform<number>;
@@ -216,8 +227,8 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
   private sourceNode: MediaStreamAudioSourceNode | null = null;
   private audioStream: MediaStream | null = null;
 
-  private readonly dataArray: Uint8Array;
-  private readonly freqArray: Uint8Array;
+  private readonly dataArray: Uint8Array<ArrayBuffer>;
+  private readonly freqArray: Uint8Array<ArrayBuffer>;
 
   private state: OrbState = 'idle';
   private readonly thresholds: OrbStateThresholds = {
@@ -232,9 +243,11 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
 
   private frameId: number | null = null;
   private isRunning = false;
+  private readonly exportEnabled: boolean;
 
   constructor(options: VoiceOrbSceneOptions) {
     this.container = options.container;
+    this.exportEnabled = options.enableExport ?? false;
     const width = options.width ?? (this.container.clientWidth || 800);
     const height = options.height ?? (this.container.clientHeight || 600);
 
@@ -244,7 +257,11 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
     this.camera = new PerspectiveCamera(45, width / height, 0.1, 100);
     this.camera.position.set(0, 0, 4);
 
-    this.renderer = new WebGLRenderer({ antialias: true, alpha: false });
+    this.renderer = new WebGLRenderer({
+      antialias: true,
+      alpha: this.exportEnabled,
+      preserveDrawingBuffer: this.exportEnabled,
+    });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(width, height);
     this.container.appendChild(this.renderer.domElement);
@@ -360,12 +377,53 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
     this.audioContext.close().catch(() => undefined);
   }
 
+  public getCanvas(): HTMLCanvasElement {
+    return this.renderer.domElement;
+  }
+
+  public setTransparentBackground(on: boolean): void {
+    this.scene.background = on ? null : BACKGROUND_COLOR.clone();
+  }
+
+  public renderAtTime(elapsed: number, delta: number): void {
+    this.clock.elapsedTime = elapsed;
+
+    const rawAmplitude = this.computeAmplitude();
+    const rawBass = this.computeBassEnergy();
+    const rawTilt = this.computeSpectrumTilt();
+
+    this.smoothedAmplitude = MathUtils.damp(this.smoothedAmplitude, rawAmplitude, 2.2, delta);
+    this.smoothedBass = MathUtils.damp(this.smoothedBass, rawBass, 1.8, delta);
+    this.smoothedTilt = MathUtils.damp(this.smoothedTilt, rawTilt, 2.5, delta);
+
+    this.updateState(this.smoothedAmplitude);
+    this.updateUniforms(elapsed, this.smoothedAmplitude, this.smoothedBass, this.smoothedTilt);
+    this.updateCamera(delta, this.smoothedTilt);
+    this.updateParticles(this.smoothedAmplitude, this.smoothedTilt, delta);
+
+    this.composer.render();
+  }
+
+  public pauseAnimation(): void {
+    if (this.frameId !== null) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = null;
+    }
+  }
+
+  public resumeAnimation(): void {
+    if (this.frameId === null && this.isRunning) {
+      this.clock.getDelta();
+      this.animate();
+    }
+  }
+
   private setupSceneObjects(): void {
-    const coreGeometry = new SphereGeometry(1, 192, 192);
+    const coreGeometry = new SphereGeometry(0.75, 192, 192);
     const core = new Mesh(coreGeometry, this.coreMaterial);
     this.scene.add(core);
 
-    const shellGeometry = new SphereGeometry(1.08, 192, 192);
+    const shellGeometry = new SphereGeometry(0.81, 192, 192);
     const shell = new Mesh(shellGeometry, this.shellMaterial);
     this.scene.add(shell);
 
@@ -374,7 +432,7 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i += 1) {
       const direction = new Vector3().randomDirection();
-      const radius = 1.35 + Math.random() * 0.25;
+      const radius = 1.0 + Math.random() * 0.2;
       const pos = direction.multiplyScalar(radius);
       positions.set([pos.x, pos.y, pos.z], i * 3);
     }
@@ -521,6 +579,8 @@ class VoiceOrbController implements VoiceOrbSceneHandle {
   }
 }
 
+export function createVoiceOrbScene(options: VoiceOrbSceneOptions & { enableExport: true }): ExportableVoiceOrbHandle;
+export function createVoiceOrbScene(options: VoiceOrbSceneOptions): VoiceOrbSceneHandle;
 export function createVoiceOrbScene(options: VoiceOrbSceneOptions): VoiceOrbSceneHandle {
   return new VoiceOrbController(options);
 }

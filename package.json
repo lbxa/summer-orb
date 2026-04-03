@@ -9,11 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "three": "^0.164.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "three": "^0.164.0",
+    "upng-js": "^2.1.0",
+    "webm-muxer": "^5.1.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.25",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.181.0",
+    "@types/upng-js": "^2.1.5",
+    "@vitejs/plugin-react": "^6.0.1",
     "typescript": "^5.4.5",
-    "vite": "^5.2.0"
+    "vite": "^8.0.3"
   }
 }
